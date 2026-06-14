@@ -1,0 +1,57 @@
+# ============================================================
+# Garbage Classification System — .gitignore
+# ============================================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# --- Virtual Environment ---
+venv/
+env/
+.env
+.venv/
+
+# --- IDE ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- Data (large files) ---
+data/raw/
+data/processed/
+data/predictions/*.db
+
+# --- Models (large files) ---
+models/saved/*.h5
+models/saved/*.keras
+models/saved/*.pb
+models/saved/*.tflite
+
+# --- Outputs ---
+outputs/logs/*.log
+outputs/plots/*.png
+outputs/reports/*.csv
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Kaggle ---
+kaggle.json
+
+# --- Misc ---
+*.zip
+*.tar.gz

@@ -1,0 +1,169 @@
+# ============================================================
+# Garbage Classification System — Configuration
+# ============================================================
+# All tunable hyperparameters, paths, and settings are
+# centralized here for easy experimentation.
+# ============================================================
+
+# --- Project Info ---
+project:
+  name: "Garbage Classification System"
+  version: "1.0.0"
+  description: "AI-powered waste classification using deep learning"
+  author: "Garbage Classification Team"
+
+# --- Dataset Configuration ---
+dataset:
+  # Kaggle dataset identifier (12-class version)
+  kaggle_dataset: "mostafaabla/garbage-classification"
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  
+  # Target classes (mapped from 12-class dataset)
+  classes:
+    - "cardboard"
+    - "glass"
+    - "metal"
+    - "organic"
+    - "paper"
+    - "plastic"
+    - "trash"
+  
+  # Class mapping from 12-class dataset to our 7 classes
+  class_mapping:
+    cardboard: "cardboard"
+    glass: "glass"
+    metal: "metal"
+    paper: "paper"
+    plastic: "plastic"
+    trash: "trash"
+    biological: "organic"
+    brown-glass: "glass"
+    green-glass: "glass"
+    white-glass: "glass"
+    clothes: "trash"
+    shoes: "trash"
+    battery: "metal"
+  
+  # Data split ratios
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+
+# --- Image Preprocessing ---
+image:
+  width: 224
+  height: 224
+  channels: 3
+  rescale: 0.00392156862  # 1/255.0
+
+# --- Data Augmentation ---
+augmentation:
+  rotation_range: 20
+  width_shift_range: 0.2
+  height_shift_range: 0.2
+  shear_range: 0.15
+  zoom_range: 0.15
+  horizontal_flip: true
+  vertical_flip: false
+  fill_mode: "nearest"
+  brightness_range: [0.8, 1.2]
+
+# --- Model Configuration ---
+model:
+  # Supported: "custom_cnn", "mobilenetv2", "resnet50", "efficientnet"
+  default: "mobilenetv2"
+  
+  # Custom CNN settings
+  custom_cnn:
+    filters: [32, 64, 128, 256]
+    kernel_size: 3
+    pool_size: 2
+    dense_units: 256
+    dropout_rate: 0.5
+  
+  # Transfer learning settings
+  transfer:
+    freeze_base: true
+    unfreeze_top_percent: 0.30  # Unfreeze top 30% layers in phase 2
+    dense_units: 256
+    dropout_rate: 0.3
+    batch_norm: true
+
+# --- Training Configuration ---
+training:
+  # Phase 1: Feature extraction (frozen base)
+  phase1:
+    epochs: 10
+    learning_rate: 0.001
+    optimizer: "adam"
+    batch_size: 32
+  
+  # Phase 2: Fine-tuning (partially unfrozen base)
+  phase2:
+    epochs: 40
+    learning_rate: 0.0001
+    optimizer: "adam"
+    batch_size: 32
+  
+  # Callbacks
+  early_stopping:
+    patience: 10
+    monitor: "val_loss"
+    restore_best_weights: true
+  
+  reduce_lr:
+    factor: 0.2
+    patience: 5
+    min_lr: 0.00001
+    monitor: "val_loss"
+  
+  checkpoint:
+    monitor: "val_accuracy"
+    save_best_only: true
+
+  # Loss function
+  loss: "categorical_crossentropy"
+  
+  # Use class weights to handle imbalance
+  use_class_weights: true
+
+# --- Paths ---
+paths:
+  models_dir: "models/saved"
+  plots_dir: "outputs/plots"
+  reports_dir: "outputs/reports"
+  logs_dir: "outputs/logs"
+  predictions_db: "data/predictions/history.db"
+
+# --- Inference ---
+inference:
+  confidence_threshold: 0.5
+  top_k: 3
+  max_file_size_mb: 10
+  allowed_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".bmp"
+    - ".webp"
+
+# --- Streamlit App ---
+app:
+  title: "♻️ Garbage Classification System"
+  page_icon: "♻️"
+  layout: "wide"
+  theme:
+    primary_color: "#2ECC71"
+    background_color: "#0E1117"
+    secondary_bg: "#1A1D23"
+    text_color: "#FAFAFA"
+
+# --- Logging ---
+logging:
+  level: "INFO"
+  format: "[%(asctime)s] %(levelname)s - %(name)s - %(message)s"
+  file: "outputs/logs/app.log"
+
+# --- Random Seed ---
+seed: 42
